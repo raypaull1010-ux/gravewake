@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GRAVEWAKE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="description" content="GRAVEWAKE — dark dinosaur gacha. Raise the dead, build your necropolis, win the Tide." />
+    <!-- PWA: installable to the home screen + offline -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#0e0c14" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="GRAVEWAKE" />
+    <link rel="icon" href="./icon-192.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body {
+        margin: 0; padding: 0; width: 100%; height: 100%;
+        background: #0e0c14; color: #cdc6d6;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        overflow: hidden; touch-action: none;
+      }
+      #status {
+        position: fixed; inset: 0; display: flex; align-items: center;
+        justify-content: center; flex-direction: column; gap: 10px;
+        background: #0e0c14; z-index: 10; transition: opacity 0.5s ease 0.3s;
+      }
+      #status.gone { opacity: 0; pointer-events: none; }
+      #status .title { font-size: 30px; letter-spacing: 3px; color: #b9a8d6; font-weight: 700; }
+      #status .sub { font-size: 14px; color: #6c6480; font-style: italic; }
+      #status .err { color: #c85a5a; font-size: 13px; margin-top: 8px; max-width: 80vw; text-align: center; }
+      canvas { display: block; width: 100vw !important; height: 100vh !important; outline: none; }
+    </style>
+  </head>
+  <body>
+    <div id="status">
+      <div class="title">⚰ GRAVEWAKE</div>
+      <div class="sub">opening the dig…</div>
+      <div class="err" id="err"></div>
+    </div>
+    <script>
+      // Register the service worker (installable + offline). Relative scope so it
+      // works under a GitHub Pages subpath.
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch((e) => console.warn("sw:", e));
+        });
+      }
+    </script>
+    <script type="module">
+      // Stable cache-bust version (NOT Date.now()) so the service worker can cache
+      // the wasm shell across reloads. Bump on each deploy alongside sw.js CACHE.
+      const VERSION = "v1";
+      const cb = new URL(location.href).searchParams.get("cb") || VERSION;
+      const { default: init } = await import(`./gravewake.js?cb=${cb}`);
+      const status = document.getElementById("status");
+      const err = document.getElementById("err");
+      try {
+        await init({ module_or_path: `./gravewake_bg.wasm?cb=${cb}` });
+        const sizeCanvas = () => {
+          const c = document.querySelector("canvas");
+          if (!c) return;
+          const dpr = window.devicePixelRatio || 1;
+          c.width = Math.floor(window.innerWidth * dpr);
+          c.height = Math.floor(window.innerHeight * dpr);
+        };
+        sizeCanvas();
+        requestAnimationFrame(sizeCanvas);
+        window.addEventListener("resize", sizeCanvas);
+        status.classList.add("gone");
+      } catch (e) {
+        status.querySelector(".sub").textContent = "failed to load";
+        err.textContent = String(e);
+        console.error(e);
+      }
+    </script>
+  </body>
+</html>

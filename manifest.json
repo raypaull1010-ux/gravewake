@@ -1,0 +1,16 @@
+{
+  "name": "GRAVEWAKE",
+  "short_name": "GRAVEWAKE",
+  "description": "Dark dinosaur gacha — raise the dead, build your necropolis, win the Tide.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0e0c14",
+  "theme_color": "#0e0c14",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
