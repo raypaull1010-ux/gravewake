@@ -52,7 +52,7 @@
     <script type="module">
       // Stable cache-bust version (NOT Date.now()) so the service worker can cache
       // the wasm shell across reloads. Bump on each deploy alongside sw.js CACHE.
-      const VERSION = "v2";
+      const VERSION = "v3";
       const cb = new URL(location.href).searchParams.get("cb") || VERSION;
       const { default: init } = await import(`./gravewake.js?cb=${cb}`);
       const status = document.getElementById("status");
