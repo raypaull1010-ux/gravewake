@@ -3,7 +3,7 @@
 // portraits-in-wasm). First visit fetches over the network and caches as it
 // goes; after that the game runs fully offline from the home-screen icon.
 // Bump CACHE on every deploy to invalidate the old cache.
-const CACHE = "gravewake-v6";
+const CACHE = "gravewake-v7";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
